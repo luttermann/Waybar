@@ -33,6 +33,8 @@ UPower::UPower(const std::string &id, const Json::Value &config)
   // Hide If Empty
   if (config_["hide-if-empty"].isBool()) hideIfEmpty_ = config_["hide-if-empty"].asBool();
 
+  if (config_["hide-if-unknown"].isBool()) hideIfUnknown_ = config_["hide-if-unknown"].asBool();
+
   // Tooltip Spacing
   if (config_["tooltip-spacing"].isInt()) tooltip_spacing_ = config_["tooltip-spacing"].asInt();
 
@@ -216,6 +218,13 @@ auto UPower::update() -> void {
     return;
   }
 
+  spdlog::debug("Status: {}", status);
+  if (status == "unknown-status" && hideIfUnknown_) {
+    box_.hide();
+    AModule::update();
+    return;
+  }
+
   label_.set_markup(getText(upDevice_, format_));
   // Set icon
   if (upDevice_.icon_name == NULL || !gtkTheme_->has_icon(upDevice_.icon_name))
@@ -370,7 +379,9 @@ void UPower::setDisplayDevice() {
           auto thisPtr{static_cast<UPower *>(user_data)};
           upDevice.upDevice = static_cast<UpDevice *>(data);
           thisPtr->getUpDeviceInfo(upDevice);
-          if (upDevice.nativePath == nullptr) return;
+          if (upDevice.nativePath == nullptr) {
+            return;
+          }
           if (0 == std::strcmp(upDevice.nativePath, thisPtr->nativePath_.c_str())) {
             // Unref current upDevice
             if (thisPtr->upDevice_.upDevice != NULL) g_object_unref(thisPtr->upDevice_.upDevice);

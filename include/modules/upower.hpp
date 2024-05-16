@@ -22,6 +22,7 @@ class UPower final : public AIconLabel {
   // Config
   bool showIcon_{true};
   bool hideIfEmpty_{true};
+  bool hideIfUnknown_{true};
   int iconSize_{20};
   int tooltip_spacing_{4};
   int tooltip_padding_{4};
