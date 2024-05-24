@@ -83,6 +83,8 @@ libepoll = dependency('epoll-shim', required: false)
 libinput = dependency('libinput', required: get_option('libinput'))
 libnl = dependency('libnl-3.0', required: get_option('libnl'))
 libnlgen = dependency('libnl-genl-3.0', required: get_option('libnl'))
+libnm = dependency('libnm', required: get_option('libnm'))
+libnm = dependency('libnm', required: get_option('libnm'))
 upower_glib = dependency('upower-glib', required: get_option('upower_glib'))
 pipewire = dependency('libpipewire-0.3', required: get_option('pipewire'))
 playerctl = dependency('playerctl', version : ['>=2.0.0'], required: get_option('mpris'))
@@ -321,6 +323,11 @@ if libnl.found() and libnlgen.found()
     man_files += files('man/waybar-network.5.scd')
 endif
 
+if libnm.found()
+    add_project_arguments('-DHAVE_LIBNM', language: 'cpp')
+    src_files += files('src/modules/network_manager.cpp')
+endif
+
 if not get_option('logind').disabled()
     add_project_arguments('-DHAVE_GAMEMODE', '-DHAVE_LOGIND_INHIBITOR', language: 'cpp')
     src_files += files(
@@ -498,6 +505,7 @@ executable(
         libinput,
         libnl,
         libnlgen,
+        libnm,
         upower_glib,
         pipewire,
         playerctl,

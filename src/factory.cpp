@@ -59,6 +59,9 @@
 #ifdef HAVE_LIBNL
 #include "modules/network.hpp"
 #endif
+#ifdef HAVE_LIBNM
+#include "modules/network_manager.hpp"
+#endif
 #ifdef HAVE_LIBUDEV
 #include "modules/backlight.hpp"
 #include "modules/backlight_slider.hpp"
@@ -250,6 +253,11 @@ waybar::AModule* waybar::Factory::makeModule(const std::string& name,
 #ifdef HAVE_LIBNL
     if (ref == "network") {
       return new waybar::modules::Network(id, config_[name]);
+    }
+#endif
+#ifdef HAVE_LIBNM
+    if (ref == "network_manager") {
+      return new waybar::modules::NetworkManager(id, config_[name]);
     }
 #endif
 #ifdef HAVE_LIBUDEV
